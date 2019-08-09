@@ -16,16 +16,18 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({extended: true})); // to support URL-encoded bodies
 
-var confs = JSON.parse(fs.readFileSync("configs.json"));
-
-var completed_size = [];
-
 var ids_list = [];
 
 var homedir = os.homedir();
-if ( !fs.existsSync(path.join(homedir, ".ipfssyncro")) ) {
-    fs.mkdirSync(path.join(homedir, ".ipfssyncro"));
+if ( !fs.existsSync(path.join(homedir, ".zionbox-mirror")) ) {
+    fs.mkdirSync(path.join(homedir, ".zionbox-mirror"));
 }
+
+var confs = JSON.parse(
+    fs.readFileSync(
+        path.join(homedir(), ".zionbox-mirror/configs.json")
+    )
+);
 
 var ipfs;
 if ( confs.ipfsAPI !== "" && typeof confs.ipfsAPI !== "undefined" ) {
@@ -36,12 +38,12 @@ if ( confs.ipfsAPI !== "" && typeof confs.ipfsAPI !== "undefined" ) {
 } else {
 
     var homedir = os.homedir();
-    if ( !fs.existsSync(path.join(homedir, ".ipfssyncro/ipfsdata")) ) {
-        fs.mkdirSync(path.join(homedir, ".ipfssyncro/ipfsdata"));
+    if ( !fs.existsSync(path.join(homedir, ".zionbox-mirror/ipfsdata")) ) {
+        fs.mkdirSync(path.join(homedir, ".zionbox-mirror/ipfsdata"));
     }
 
     const IPFS = require('ipfs');
-    ipfs = new IPFS({repo: path.join(homedir, ".ipfssyncro/ipfsdata")});
+    ipfs = new IPFS({repo: path.join(homedir, ".zionbox-mirror/ipfsdata")});
 
     ipfs.on('ready', () => {
         //callback();
