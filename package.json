@@ -17,5 +17,8 @@
     "ipfs-http-client": "^33.1.0",
     "nedb": "^1.8.0",
     "path": "^0.12.7"
+  },
+  "bin": {
+    "hello": "./zionbox-mirror.js"
   }
 }
