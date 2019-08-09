@@ -1,0 +1,21 @@
+{
+  "name": "zionbox-mirror",
+  "version": "1.0.0",
+  "description": "",
+  "main": "zionbox-mirror.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Grupo GWTK (www.gwtk.com.br)",
+  "license": "MIT",
+  "dependencies": {
+    "dev-null": "^0.1.1",
+    "express": "^4.17.1",
+    "find-process": "^1.4.2",
+    "http": "0.0.0",
+    "ipfs": "^0.36.4",
+    "ipfs-http-client": "^33.1.0",
+    "nedb": "^1.8.0",
+    "path": "^0.12.7"
+  }
+}
