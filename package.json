@@ -1,7 +1,7 @@
 {
   "name": "zionbox-mirror",
-  "version": "1.0.1",
-  "description": "",
+  "version": "1.0.3",
+  "description": "Mirror Module - This is a secured and decentralized file system on the web!",
   "main": "zionbox-mirror.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -20,5 +20,18 @@
   },
   "bin": {
     "hello": "./zionbox-mirror.js"
+  },
+  "keywords": [
+    "mirror",
+    "ipfs",
+    "file manager",
+    "decentralized",
+    "decentralization",
+    "aes256",
+    "crypto"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paulorieck/ZionBox-Mirror.git"
   }
 }
