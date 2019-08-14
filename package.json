@@ -1,6 +1,6 @@
 {
   "name": "zionbox-mirror",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Mirror Module - This is a secured and decentralized file system on the web!",
   "main": "zionbox-mirror.js",
   "scripts": {
