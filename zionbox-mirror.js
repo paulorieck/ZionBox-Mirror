@@ -25,7 +25,7 @@ if ( !fs.existsSync(path.join(homedir, ".zionbox-mirror")) ) {
 
 var confs = JSON.parse(
     fs.readFileSync(
-        path.join(homedir(), ".zionbox-mirror/configs.json")
+        path.join(homedir, ".zionbox-mirror/configs.json")
     )
 );
 
@@ -177,63 +177,69 @@ function synchronizeObject(hash, id, callback) {
 
                 console.log("Will locally synchronize the hash: "+hash);
 
-                // Cat content
-                var readableStream = ipfs.catReadableStream(hash);
+                try {
 
-                readableStream.pipe(devnull());
+                    // Cat content
+                    var readableStream = ipfs.catReadableStream(hash);
 
-                var last_package_time = 0;
-                readableStream.on('data',function () {
-                    last_package_time = (new Date()).getTime();
-                });
+                    readableStream.pipe(devnull());
 
-                var timer = setInterval(function () {
-                    if ( last_package_time !== 0 && (new Date()).getTime() - last_package_time > 60000 ) {
-                        console.log("Timeout! The object '"+hash+"' is not completely downloaded!");
-                        callback();
-                    }
-                }, 30000);
+                    var last_package_time = 0;
+                    readableStream.on('data',function () {
+                        last_package_time = (new Date()).getTime();
+                    });
 
-                readableStream.on('end',function () {
-
-                    clearInterval(timer);
-
-                    // Remove the object from the processing list
-                    for (var i = 0; i < ids_list.length; i++) {
-                        if ( ids_list[i].id === id ) {
-                            for (var j = 0; j < ids_list[i].list.length; j++) {
-                                if ( ids_list[i].list[j] === hash ) {
-                                    console.log("Removing from list: "+ids_list[i].list[j]);
-                                    ids_list[i].list.splice(j,1);
-                                    j--;
-                                    break;
-                                }
-                            }
-                            break;
-                        }
-                    }
-                   
-                    synchronized.insert({"hash": hash, "last_access": now}, function (error, newDoc) {
-
-                        if ( error ) {
-
-                            console.log("Error:");
-                            console.log(error);
-
-                            callback(error);
-
-                        } else {
-
-                            ipfs.pin.add(hash.hash, function () {
-                            });
-
+                    var timer = setInterval(function () {
+                        if ( last_package_time !== 0 && (new Date()).getTime() - last_package_time > 60000 ) {
+                            console.log("Timeout! The object '"+hash+"' is not completely downloaded!");
                             callback();
-
                         }
+                    }, 30000);
+
+                    readableStream.on('end',function () {
+
+                        clearInterval(timer);
+
+                        // Remove the object from the processing list
+                        for (var i = 0; i < ids_list.length; i++) {
+                            if ( ids_list[i].id === id ) {
+                                for (var j = 0; j < ids_list[i].list.length; j++) {
+                                    if ( ids_list[i].list[j] === hash ) {
+                                        console.log("Removing from list: "+ids_list[i].list[j]);
+                                        ids_list[i].list.splice(j,1);
+                                        j--;
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                    
+                        synchronized.insert({"hash": hash, "last_access": now}, function (error, newDoc) {
+
+                            if ( error ) {
+
+                                console.log("Error:");
+                                console.log(error);
+
+                                callback(error);
+
+                            } else {
+
+                                ipfs.pin.add(hash.hash, function () {
+                                });
+
+                                callback();
+
+                            }
+
+                        });
 
                     });
 
-                });
+                } catch (Error) {
+
+                }
 
             }
 
