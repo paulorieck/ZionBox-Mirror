@@ -14,9 +14,10 @@
     "find-process": "^1.4.2",
     "http": "0.0.0",
     "ipfs": "^0.36.4",
-    "ipfs-http-client": "^33.1.0",
+    "ipfs-http-client": "^32.0.1",
     "nedb": "^1.8.0",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "ws": "^7.1.0"
   },
   "bin": {
     "hello": "./zionbox-mirror.js"
