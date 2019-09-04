@@ -63,7 +63,7 @@ setInterval(function () {
             
             ids_list[i].processing = true;
             processStructure(0, ids_list[i].list, ids_list[i].id, function () {
-                
+
             });
 
         }
@@ -79,9 +79,11 @@ function processStructure(counter, hashes, id, callback) {
         counter++;
 
         if ( counter < hashes.length ) {
+
             processStructure(counter, hashes, id, function () {
                 callback();
             });
+
         } else {
 
             for (var i = 0; i < ids_list.length; i++) {
@@ -92,6 +94,7 @@ function processStructure(counter, hashes, id, callback) {
             }
 
             callback();
+
         }
 
     });
