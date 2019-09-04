@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const find_process = require('find-process');
+const devnull = require('dev-null');
 
 const express = require("express");
 
@@ -51,14 +52,13 @@ if ( confs.ipfsAPI !== "" && typeof confs.ipfsAPI !== "undefined" ) {
 
 }
 
-var devnull = require('dev-null');
-
 const Datastore = require('nedb');
 const synchronized = new Datastore({filename: 'nedbs/synchronized.db', autoload: true});
 
 setInterval(function () {
 
     for (var i = 0; i < ids_list.length; i++) {
+
         if ( !ids_list[i].processing && ids_list[i].list.length > 0 ) {
             
             ids_list[i].processing = true;
@@ -67,6 +67,7 @@ setInterval(function () {
             });
 
         }
+
     }
 
 }, 10000);
@@ -118,14 +119,32 @@ app.post("/processStructure/", function (req, res) {
     }
 
     for (var i = 0; i < ids_list.length; i++) {
+
         if ( ids_list[i].id === id ) {
+        
             for (var j = 0; j < hashes.length; j++) {
-                ids_list[i].list.push(hashes[j].hash);
+                
+                var hash_exists = false;
+                for (var k = 0; k < ids_list[i].list; k++) {
+                    if ( ids_list[i].list[k] === hashes[j].hash ) {
+                        hash_exists = true;
+                        break;
+                    }
+                }
+
+                if ( !hash_exists ) {
+                    ids_list[i].list.push(hashes[j].hash);
+                }
+
             }
+
             console.log("ids_list[i].list: ");
             console.log(ids_list[i].list);
+
             break;
+
         }
+
     }
 
 });
@@ -175,7 +194,7 @@ function synchronizeObject(hash, id, callback) {
 
             } else { // Does not exists
 
-                console.log("Will locally synchronize the hash: "+hash);
+                console.log("Will synchronize the hash: '"+hash+"' on this mirror server");
 
                 try {
 
@@ -190,7 +209,7 @@ function synchronizeObject(hash, id, callback) {
                     });
 
                     var timer = setInterval(function () {
-                        if ( last_package_time !== 0 && (new Date()).getTime() - last_package_time > 60000 ) {
+                        if ( last_package_time !== 0 && (new Date()).getTime() - last_package_time > 10000 ) {
                             console.log("Timeout! The object '"+hash+"' is not completely downloaded!");
                             callback();
                         }
@@ -227,9 +246,8 @@ function synchronizeObject(hash, id, callback) {
                             } else {
 
                                 ipfs.pin.add(hash.hash, function () {
+                                    callback();
                                 });
-
-                                callback();
 
                             }
 
@@ -238,7 +256,7 @@ function synchronizeObject(hash, id, callback) {
                     });
 
                 } catch (Error) {
-
+                    console.log("Error while synchronizing object '"+hash+"': "+Error);
                 }
 
             }
